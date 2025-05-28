@@ -75,25 +75,21 @@ def split_srt_blocks(input_path, output_path):
             f.write(f"{format_time(start)} --> {format_time(end)}\n")
             for line in lines:
                 f.write(f"{line}\n")
-            f.write("\n\n")
+            f.write("\n")
 
 def safe_filename(name):
     return re.sub(r'[\\/:"*?<>|]+', '_', name)
 
-def batch_split_srts(input_folder, output_folder):
-    os.makedirs(output_folder, exist_ok=True)
+def enhance(input_path):
+    os.makedirs('enhanced_srt_files', exist_ok=True)
+    
+    filename = os.path.basename(input_path)
+    base, _ = os.path.splitext(filename)
+    safe_base = safe_filename(base)
+    output_path = os.path.join('enhanced_srt_files', f"{safe_base}.srt")
 
-    for filename in os.listdir(input_folder):
-        if filename.endswith(".srt"):
-            input_path = os.path.join(input_folder, filename)
-            base, _ = os.path.splitext(filename)
-            safe_base = safe_filename(base)
-            output_path = os.path.join(output_folder, f"{safe_base}.clean.srt")
-            print(f"Processing: {filename}")
-            try:
-                split_srt_blocks(input_path, output_path)
-            except Exception as e:
-                print(f"❌ Error processing {filename}: {e}")
-
-# Utilisation :
-batch_split_srts("srt_files", "enhanced_srt_files")
+    print(f"Processing: {filename}")
+    try:
+        split_srt_blocks(input_path, output_path)
+    except Exception as e:
+        print(f"Error processing {filename}: {e}")
